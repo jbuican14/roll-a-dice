@@ -1,49 +1,56 @@
 import React from 'react';
 import Die from './Die';
+import './RollDice.css';
 
 class RollDice extends React.Component {
+  static defaultProps = {
+    sides: ['one', 'two', 'three', 'four', 'five', 'six'],
+  };
   constructor(props) {
     super(props);
     this.state = {
       numDice1: 'one',
       numDice2: 'one',
+      isRolling: false,
     };
 
     this.genDice = this.genDice.bind(this);
-    this.diceName = {
-      1: 'one',
-      2: 'two',
-      3: 'three',
-      4: 'four',
-      5: 'five',
-      6: 'six',
-    };
   }
 
   genDice() {
-    let rand1 = Math.floor(Math.random() * 6) + 1;
-    let rand2 = Math.floor(Math.random() * 6) + 1;
-
-    rand1 = this.diceName[rand1];
-    rand2 = this.diceName[rand2];
+    let rand1 = this.props.sides[
+      Math.floor(Math.random() * this.props.sides.length)
+    ];
+    let rand2 = this.props.sides[
+      Math.floor(Math.random() * this.props.sides.length)
+    ];
 
     this.setState({
       numDice1: rand1,
       numDice2: rand2,
+      isRolling: true,
     });
+
+    // wait 1s
+    setTimeout(() => {
+      this.setState({ isRolling: false });
+    }, 1000);
   }
 
   render() {
     return (
-      <div>
-        <p>
-          {this.state.numDice1} {this.state.numDice2}
-        </p>
-        <div>
-          <Die dice1={this.state.numDice1} dice2={this.state.numDice2} />
+      <div className="RollDice">
+        <div className="RollDice-container">
+          <Die
+            dice1={this.state.numDice1}
+            dice2={this.state.numDice2}
+            rolling={this.state.isRolling}
+          />
         </div>
 
-        <button onClick={this.genDice}>Roll Dice</button>
+        <button onClick={this.genDice} disabled={this.state.isRolling}>
+          {this.state.isRolling ? 'Rolling...' : 'Roll Dice'}
+        </button>
       </div>
     );
   }
